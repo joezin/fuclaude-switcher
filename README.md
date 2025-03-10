@@ -1,36 +1,97 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# FuClaude Switcher
 
-## Getting Started
+A Next.js application for managing accounts with Cloudflare D1 database integration.
 
-First, run the development server:
+## Features
+
+- Account management (create, read, update, delete)
+- Session key management
+- Account status toggling
+- Responsive UI for both desktop and mobile
+- Cloudflare D1 database integration
+
+## Setup
+
+### Prerequisites
+
+- Node.js 18+ and npm
+- Cloudflare account with Workers and D1 access
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/fuclaude-switcher.git
+   cd fuclaude-switcher
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Create a Cloudflare D1 database:
+   ```bash
+   npx wrangler d1 create accounts_db
+   ```
+
+4. Update the `wrangler.toml` file with your database ID:
+   ```toml
+   [[d1_databases]]
+   binding = "DB"
+   database_name = "accounts_db"
+   database_id = "your-database-id" # Replace with the ID from the previous step
+   ```
+
+5. Create the database schema:
+   ```bash
+   npx wrangler d1 execute accounts_db --file=./schema.sql
+   ```
+
+### Development
+
+Run the development server with Wrangler to enable D1 access:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npx wrangler pages dev .next --d1=accounts_db
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Production Deployment
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+Deploy to Cloudflare Pages:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npx wrangler pages deploy .next
+```
 
-## Learn More
+## API Routes
 
-To learn more about Next.js, take a look at the following resources:
+The application provides the following API routes:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `GET /api/accounts` - Get all accounts
+- `GET /api/accounts?id=1` - Get a specific account
+- `POST /api/accounts` - Create a new account
+- `PUT /api/accounts/1` - Update an account
+- `DELETE /api/accounts/1` - Delete an account
+- `POST /api/seed` - Seed the database with initial data (development only)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Database Schema
 
-## Deploy on Vercel
+The application uses a simple schema for accounts:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```sql
+CREATE TABLE accounts (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL UNIQUE,
+  session_key TEXT NOT NULL,
+  is_active INTEGER NOT NULL DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## License
+
+MIT

@@ -1,0 +1,9 @@
+name = "fuclaude-switcher"
+compatibility_date = "2023-12-01"
+
+# D1 Database configuration
+[[d1_databases]]
+
+binding = "DB"
+database_name = "fuclaude-switcher"
+database_id = "713fa393-cacf-4e3b-9b25-fa71a5948b98"
