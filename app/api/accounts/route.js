@@ -42,7 +42,7 @@ export async function GET(request, context) {
 // POST /api/accounts - Create a new account
 export async function POST(request, context) {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
     
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

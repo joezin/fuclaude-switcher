@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { createAccount, updateAccount } from '../lib/accountService';
 
 export default function AccountModal({ account, mode, onClose, onSave }) {
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
