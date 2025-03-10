@@ -32,20 +32,20 @@ A Next.js application for managing accounts with Cloudflare D1 database integrat
 
 3. Create a Cloudflare D1 database:
    ```bash
-   npx wrangler d1 create accounts_db
+   npx wrangler d1 create fuclaude-switcher
    ```
 
 4. Update the `wrangler.toml` file with your database ID:
    ```toml
    [[d1_databases]]
    binding = "DB"
-   database_name = "accounts_db"
+   database_name = "fuclaude-switcher"
    database_id = "your-database-id" # Replace with the ID from the previous step
    ```
 
 5. Create the database schema:
    ```bash
-   npx wrangler d1 execute accounts_db --file=./schema.sql
+   npx wrangler d1 execute fuclaude-switcher --file=./schema.sql
    ```
 
 ### Development
@@ -53,7 +53,7 @@ A Next.js application for managing accounts with Cloudflare D1 database integrat
 Run the development server with Wrangler to enable D1 access:
 
 ```bash
-npx wrangler pages dev .next --d1=accounts_db
+npx wrangler pages dev .next --d1=fuclaude-switcher
 ```
 
 ### Production Deployment

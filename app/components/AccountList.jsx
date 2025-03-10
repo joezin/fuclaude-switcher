@@ -6,6 +6,8 @@ import AccountListItem from './AccountListItem';
 import AccountCard from './AccountCard';
 import AccountModal from './AccountModal';
 import EmptyState from './EmptyState';
+import ConfirmDialog from './ConfirmDialog';
+import Toast from './Toast';
 
 export default function AccountList() {
   const [accounts, setAccounts] = useState([]);
@@ -15,6 +17,8 @@ export default function AccountList() {
   const [isMobileView, setIsMobileView] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, accountId: null });
+  const [toast, setToast] = useState({ message: '', type: 'success' });
 
   useEffect(() => {
     // Load accounts when component mounts
@@ -37,6 +41,11 @@ export default function AccountList() {
     };
   }, []);
 
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type });
+    setTimeout(() => setToast({ message: '', type: 'success' }), 3000);
+  };
+
   const refreshAccounts = async () => {
     try {
       setIsLoading(true);
@@ -54,7 +63,8 @@ export default function AccountList() {
   const handleUpdateSessionKey = async (id, newSessionKey) => {
     try {
       await updateSessionKey(id, newSessionKey);
-      refreshAccounts();
+      await refreshAccounts();
+      showToast('会话密钥更新成功');
     } catch (err) {
       console.error('Error updating session key:', err);
       setError('Failed to update session key. Please try again.');
@@ -64,7 +74,9 @@ export default function AccountList() {
   const handleToggleStatus = async (id) => {
     try {
       await toggleAccountStatus(id);
-      refreshAccounts();
+      await refreshAccounts();
+      const account = accounts.find(a => a.id === id);
+      showToast(`账号${account.isActive ? '停用' : '启用'}成功`);
     } catch (err) {
       console.error('Error toggling account status:', err);
       setError('Failed to update account status. Please try again.');
@@ -72,21 +84,24 @@ export default function AccountList() {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this account?')) {
-      try {
-        await deleteAccount(id);
-        refreshAccounts();
-      } catch (err) {
-        console.error('Error deleting account:', err);
-        setError('Failed to delete account. Please try again.');
-      }
+    setConfirmDialog({ isOpen: true, accountId: id });
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      await deleteAccount(confirmDialog.accountId);
+      await refreshAccounts();
+      showToast('账号删除成功');
+    } catch (err) {
+      console.error('Error deleting account:', err);
+      setError('Failed to delete account. Please try again.');
+    } finally {
+      setConfirmDialog({ isOpen: false, accountId: null });
     }
   };
 
-  const handleViewDetails = (account) => {
-    setCurrentAccount(account);
-    setModalMode('view');
-    setIsModalOpen(true);
+  const handleCancelDelete = () => {
+    setConfirmDialog({ isOpen: false, accountId: null });
   };
 
   const handleEdit = (account) => {
@@ -110,7 +125,8 @@ export default function AccountList() {
     try {
       setIsLoading(true);
       await seedDatabase();
-      refreshAccounts();
+      await refreshAccounts();
+      showToast('数据初始化成功');
     } catch (err) {
       console.error('Error seeding database:', err);
       setError('Failed to seed database. Please try again.');
@@ -230,29 +246,16 @@ export default function AccountList() {
         </div>
       )}
 
-      <div className={isMobileView ? "space-y-4" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"}>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {accounts.map(account => (
-          isMobileView ? (
-            <AccountListItem
-              key={account.id}
-              account={account}
-              onToggleStatus={handleToggleStatus}
-              onUpdateSessionKey={handleUpdateSessionKey}
-              onDelete={handleDelete}
-              onViewDetails={handleViewDetails}
-              onEdit={handleEdit}
-            />
-          ) : (
-            <AccountCard
-              key={account.id}
-              account={account}
-              onToggleStatus={handleToggleStatus}
-              onUpdateSessionKey={handleUpdateSessionKey}
-              onDelete={handleDelete}
-              onViewDetails={handleViewDetails}
-              onEdit={handleEdit}
-            />
-          )
+          <AccountCard
+            key={account.id}
+            account={account}
+            onToggleStatus={handleToggleStatus}
+            onUpdateSessionKey={handleUpdateSessionKey}
+            onDelete={handleDelete}
+            onEdit={handleEdit}
+          />
         ))}
       </div>
 
@@ -261,9 +264,27 @@ export default function AccountList() {
           account={currentAccount}
           mode={modalMode}
           onClose={handleCloseModal}
-          onSave={refreshAccounts}
+          onSave={async () => {
+            await refreshAccounts();
+            showToast(`账号${modalMode === 'create' ? '创建' : '更新'}成功`);
+            handleCloseModal();
+          }}
         />
       )}
+
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        title="确认删除"
+        message="确定要删除这个账号吗？此操作无法撤销。"
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+      />
+
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        onClose={() => setToast({ message: '', type: 'success' })}
+      />
     </div>
   );
 } 

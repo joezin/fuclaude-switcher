@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
+import { executeQuery, executeQuerySingle, mapToAccount } from '../../lib/db';
+
+// export const runtime = "edge";
 
 // POST /api/seed - Seed the database with initial data
-export async function POST(request) {
+export async function POST(request, context) {
   try {
-    // Get D1 database from environment
-    const db = request.env.DB;
-    
     // Check if we're in production
     if (process.env.NODE_ENV === 'production') {
       return NextResponse.json({ error: 'Seeding is not allowed in production' }, { status: 403 });
@@ -19,41 +19,31 @@ export async function POST(request) {
     ];
     
     // Clear existing accounts
-    await db.prepare('DELETE FROM accounts').run();
-    
-    // Reset auto-increment
-    await db.prepare('DELETE FROM sqlite_sequence WHERE name = ?').bind('accounts').run();
+    await executeQuery('DELETE FROM accounts');
     
     // Insert initial accounts
     const results = [];
     
     for (const account of initialAccounts) {
-      const result = await db.prepare(
-        'INSERT INTO accounts (name, email, session_key, is_active) VALUES (?, ?, ?, ?) RETURNING *'
-      ).bind(
-        account.name,
-        account.email,
-        account.sessionKey,
-        account.isActive ? 1 : 0
-      ).run();
+      const query = `
+        INSERT INTO accounts (name, email, session_key, is_active) 
+        VALUES ($1, $2, $3, $4) 
+        RETURNING *
+      `;
       
-      if (result.results && result.results.length > 0) {
-        const newAccount = result.results[0];
-        results.push({
-          id: newAccount.id,
-          name: newAccount.name,
-          email: newAccount.email,
-          sessionKey: newAccount.session_key,
-          isActive: newAccount.is_active === 1,
-          createdAt: newAccount.created_at,
-          updatedAt: newAccount.updated_at
-        });
+      const newAccount = await executeQuerySingle(
+        query,
+        [account.name, account.email, account.sessionKey, account.isActive]
+      );
+      
+      if (newAccount) {
+        results.push(mapToAccount(newAccount));
       }
     }
     
     return NextResponse.json({ success: true, accounts: results });
   } catch (error) {
     console.error('Error seeding database:', error);
-    return NextResponse.json({ error: 'Failed to seed database' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to seed database: ' + error.message }, { status: 500 });
   }
 } 

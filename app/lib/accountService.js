@@ -1,45 +1,45 @@
 import Account from '../models/Account';
 import {
-  getAccountsFromD1,
-  getAccountByIdFromD1,
-  createAccountInD1,
-  updateAccountInD1,
-  updateSessionKeyInD1,
-  toggleAccountStatusInD1,
-  deleteAccountFromD1,
-  seedDatabaseD1
-} from './d1ServiceNew';
+  getAccountsFromNeon,
+  getAccountByIdFromNeon,
+  createAccountInNeon,
+  updateAccountInNeon,
+  updateSessionKeyInNeon,
+  toggleAccountStatusInNeon,
+  deleteAccountFromNeon,
+  seedDatabaseNeon
+} from './neonService';
 
-// Export the D1 functions with the same interface as before
+// Export the Neon functions with the same interface as before
 export const getAccounts = async () => {
-  return await getAccountsFromD1();
+  return await getAccountsFromNeon();
 };
 
 export const getAccountById = async (id) => {
-  return await getAccountByIdFromD1(id);
+  return await getAccountByIdFromNeon(id);
 };
 
 export const createAccount = async (accountData) => {
-  return await createAccountInD1(accountData);
+  return await createAccountInNeon(accountData);
 };
 
 export const updateAccount = async (id, accountData) => {
-  return await updateAccountInD1(id, accountData);
+  return await updateAccountInNeon(id, accountData);
 };
 
 export const updateSessionKey = async (id, sessionKey) => {
-  return await updateSessionKeyInD1(id, sessionKey);
+  return await updateSessionKeyInNeon(id, sessionKey);
 };
 
 export const toggleAccountStatus = async (id) => {
-  return await toggleAccountStatusInD1(id);
+  return await toggleAccountStatusInNeon(id);
 };
 
 export const deleteAccount = async (id) => {
-  return await deleteAccountFromD1(id);
+  return await deleteAccountFromNeon(id);
 };
 
 // Seed function to populate the database with initial data (for development)
 export const seedDatabase = async () => {
-  return await seedDatabaseD1();
+  return await seedDatabaseNeon();
 }; 

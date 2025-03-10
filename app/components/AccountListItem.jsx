@@ -1,17 +1,18 @@
 'use client';
 
 import { useState } from 'react';
+import { generateFuclaudeUrl, copyToClipboard } from '../lib/utils';
 
 export default function AccountListItem({ 
   account, 
   onUpdateSessionKey, 
   onToggleStatus, 
-  onViewDetails, 
   onEdit, 
   onDelete 
 }) {
   const [isEditingSessionKey, setIsEditingSessionKey] = useState(false);
   const [sessionKey, setSessionKey] = useState(account.sessionKey);
+  const [showCopiedToast, setShowCopiedToast] = useState(false);
 
   const handleSessionKeyChange = (e) => {
     setSessionKey(e.target.value);
@@ -33,6 +34,20 @@ export default function AccountListItem({
     } else if (e.key === 'Escape') {
       handleSessionKeyCancel();
     }
+  };
+
+  const handleCopyLink = async () => {
+    const url = generateFuclaudeUrl(account.sessionKey);
+    const success = await copyToClipboard(url);
+    if (success) {
+      setShowCopiedToast(true);
+      setTimeout(() => setShowCopiedToast(false), 2000);
+    }
+  };
+
+  const handleVisitFuclaude = () => {
+    const url = generateFuclaudeUrl(account.sessionKey);
+    window.open(url, '_blank');
   };
 
   return (
@@ -83,29 +98,30 @@ export default function AccountListItem({
         )}
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm">
-        <span
-          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-            account.isActive
-              ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100'
-              : 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100'
-          }`}
-        >
-          {account.isActive ? '有效' : '无效'}
-        </span>
         <button
           onClick={() => onToggleStatus(account.id)}
-          className="ml-2 text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"
+          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+            account.isActive
+              ? 'bg-green-100 text-green-800 hover:bg-red-100 hover:text-red-800 dark:bg-green-800 dark:text-green-100 dark:hover:bg-red-800 dark:hover:text-red-100'
+              : 'bg-red-100 text-red-800 hover:bg-green-100 hover:text-green-800 dark:bg-red-800 dark:text-red-100 dark:hover:bg-green-800 dark:hover:text-green-100'
+          }`}
         >
-          {account.isActive ? '⊘' : '⊕'}
+          {account.isActive ? '已生效' : '已失效'}
         </button>
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
         <div className="flex space-x-2">
           <button
-            onClick={() => onViewDetails(account)}
-            className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300"
+            onClick={handleVisitFuclaude}
+            className="text-white bg-blue-500 hover:bg-blue-600 px-2 py-1 rounded"
           >
-            详情
+            访问fuclaude
+          </button>
+          <button
+            onClick={handleCopyLink}
+            className="text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 px-2 py-1 rounded"
+          >
+            复制链接
           </button>
           <button
             onClick={() => onEdit(account)}
@@ -121,6 +137,12 @@ export default function AccountListItem({
           </button>
         </div>
       </td>
+
+      {showCopiedToast && (
+        <div className="fixed bottom-4 right-4 bg-gray-800 text-white px-4 py-2 rounded shadow-lg">
+          链接已复制到剪贴板
+        </div>
+      )}
     </tr>
   );
 } 

@@ -1,10 +1,10 @@
 /**
- * Cloudflare D1 Database Service
- * This service provides functions to interact with the Cloudflare D1 database via API routes
+ * Neon PostgreSQL Database Service
+ * This service provides functions to interact with the Neon PostgreSQL database via API routes
  */
 
 // Get all accounts
-export async function getAccountsFromD1() {
+export async function getAccountsFromNeon() {
   try {
     const response = await fetch('/api/accounts', {
       method: 'GET',
@@ -26,7 +26,7 @@ export async function getAccountsFromD1() {
 }
 
 // Get account by ID
-export async function getAccountByIdFromD1(id) {
+export async function getAccountByIdFromNeon(id) {
   try {
     const response = await fetch(`/api/accounts?id=${id}`, {
       method: 'GET',
@@ -48,7 +48,7 @@ export async function getAccountByIdFromD1(id) {
 }
 
 // Create a new account
-export async function createAccountInD1(accountData) {
+export async function createAccountInNeon(accountData) {
   try {
     const response = await fetch('/api/accounts', {
       method: 'POST',
@@ -71,7 +71,7 @@ export async function createAccountInD1(accountData) {
 }
 
 // Update an account
-export async function updateAccountInD1(id, accountData) {
+export async function updateAccountInNeon(id, accountData) {
   try {
     const response = await fetch(`/api/accounts/${id}`, {
       method: 'PUT',
@@ -94,18 +94,18 @@ export async function updateAccountInD1(id, accountData) {
 }
 
 // Update session key
-export async function updateSessionKeyInD1(id, sessionKey) {
-  return updateAccountInD1(id, { sessionKey });
+export async function updateSessionKeyInNeon(id, sessionKey) {
+  return updateAccountInNeon(id, { sessionKey });
 }
 
 // Toggle account status
-export async function toggleAccountStatusInD1(id) {
+export async function toggleAccountStatusInNeon(id) {
   try {
     // First get the current account to know its status
-    const account = await getAccountByIdFromD1(id);
+    const account = await getAccountByIdFromNeon(id);
     
     // Then update with the opposite status
-    return updateAccountInD1(id, { isActive: !account.isActive });
+    return updateAccountInNeon(id, { isActive: !account.isActive });
   } catch (error) {
     console.error(`Error toggling status for account with ID ${id}:`, error);
     throw error;
@@ -113,7 +113,7 @@ export async function toggleAccountStatusInD1(id) {
 }
 
 // Delete an account
-export async function deleteAccountFromD1(id) {
+export async function deleteAccountFromNeon(id) {
   try {
     const response = await fetch(`/api/accounts/${id}`, {
       method: 'DELETE',
@@ -135,7 +135,7 @@ export async function deleteAccountFromD1(id) {
 }
 
 // Seed the database with initial data
-export async function seedDatabaseD1() {
+export async function seedDatabaseNeon() {
   try {
     const response = await fetch('/api/seed', {
       method: 'POST',
