@@ -121,19 +121,6 @@ export default function AccountList() {
     setCurrentAccount(null);
   };
 
-  const handleSeedDatabase = async () => {
-    try {
-      setIsLoading(true);
-      await seedDatabase();
-      await refreshAccounts();
-      showToast('数据初始化成功');
-    } catch (err) {
-      console.error('Error seeding database:', err);
-      setError('Failed to seed database. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   // Show loading state
   if (isLoading && accounts.length === 0) {
@@ -170,12 +157,6 @@ export default function AccountList() {
             >
               添加账号
             </button>
-            <button
-              onClick={handleSeedDatabase}
-              className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
-            >
-              初始化数据
-            </button>
           </div>
         </div>
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
@@ -205,12 +186,6 @@ export default function AccountList() {
             >
               添加账号
             </button>
-            <button
-              onClick={handleSeedDatabase}
-              className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
-            >
-              初始化数据
-            </button>
           </div>
         </div>
         <EmptyState onAddAccount={handleCreate} />
@@ -222,7 +197,7 @@ export default function AccountList() {
   return (
     <div className="container mx-auto px-4">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">账号管理</h1>
+        <h1 className="text-2xl font-bold">总账号数{accounts.length}</h1>
         <div className="flex space-x-2">
           <button
             onClick={handleCreate}
