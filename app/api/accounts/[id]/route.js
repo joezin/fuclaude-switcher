@@ -14,7 +14,7 @@ export async function PUT(request, context) {
     }
 
     const { id } = await context.params;
-    const { name, email, sessionKey, isActive } = await request.json();
+    const { name, email, sessionKey, isActive, prefixUrl } = await request.json();
     
     // Check if account exists and belongs to the user
     const checkQuery = 'SELECT * FROM accounts WHERE id = $1 AND user_id = $2';
@@ -58,6 +58,12 @@ export async function PUT(request, context) {
     if (isActive !== undefined) {
       updates.push(`is_active = $${paramIndex}`);
       values.push(isActive);
+      paramIndex++;
+    }
+
+    if (prefixUrl !== undefined) {
+      updates.push(`prefix_url = $${paramIndex}`);
+      values.push(prefixUrl);
       paramIndex++;
     }
     

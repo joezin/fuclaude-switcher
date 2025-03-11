@@ -7,7 +7,8 @@ import {
   updateSessionKeyInNeon,
   toggleAccountStatusInNeon,
   deleteAccountFromNeon,
-  seedDatabaseNeon
+  seedDatabaseNeon,
+  refreshPrefixInNeon
 } from './neonService';
 
 // Export the Neon functions with the same interface as before
@@ -43,3 +44,8 @@ export const deleteAccount = async (id) => {
 export const seedDatabase = async () => {
   return await seedDatabaseNeon();
 }; 
+
+export const refreshPrefix = async (id) => {
+  return await refreshPrefixInNeon(id);
+};
+

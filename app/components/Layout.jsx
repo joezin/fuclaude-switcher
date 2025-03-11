@@ -35,11 +35,9 @@ export default function Layout({ children }) {
   const mainMinHeight = windowHeight ? `${windowHeight - 140}px` : 'calc(100vh - 140px)';
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
-      
-      
+    <div className="min-h-screen  flex flex-col">
       <main style={{ minHeight: mainMinHeight }} className="flex-grow">
-        <div className={`max-w-7xl mx-auto py-6 ${isMobileView ? 'px-4' : 'sm:px-6 lg:px-8'}`}>
+        <div className={`max-w-7xl mx-auto `}>
           {children}
         </div>
       </main>

@@ -51,95 +51,84 @@ export default function AccountListItem({
   };
 
   return (
-    <tr className="hover:bg-gray-50 dark:hover:bg-gray-700">
-      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-        {account.id}
+    <tr className="hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors duration-200">
+      <td className="px-6 py-4 whitespace-nowrap">
+        <div className="w-8 h-8 bg-blue-500/10 dark:bg-blue-500/20 border border-blue-500/20 dark:border-blue-500/30 text-blue-600 dark:text-blue-400 rounded-lg flex items-center justify-center font-medium">
+          {account.id}
+        </div>
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-        {account.name}
+      <td className="px-6 py-4 whitespace-nowrap">
+        <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{account.name}</div>
+        <div className="text-xs text-gray-500 dark:text-gray-400">{account.email}</div>
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-        {account.email}
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-        {isEditingSessionKey ? (
-          <div className="flex items-center space-x-2">
-            <input
-              type="text"
-              value={sessionKey}
-              onChange={handleSessionKeyChange}
-              onKeyDown={handleSessionKeyKeyDown}
-              className="border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-sm dark:bg-gray-700 dark:text-white"
-              autoFocus
-            />
-            <button
-              onClick={handleSessionKeySubmit}
-              className="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300"
-            >
-              ✓
-            </button>
-            <button
-              onClick={handleSessionKeyCancel}
-              className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
-            >
-              ✕
-            </button>
-          </div>
-        ) : (
-          <div className="flex items-center space-x-2">
-            <span className="font-mono">{account.sessionKey}</span>
-            <button
-              onClick={() => setIsEditingSessionKey(true)}
-              className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
-            >
-              ✎
-            </button>
-          </div>
-        )}
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm">
-        <button
-          onClick={() => onToggleStatus(account.id)}
-          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-            account.isActive
-              ? 'bg-green-100 text-green-800 hover:bg-red-100 hover:text-red-800 dark:bg-green-800 dark:text-green-100 dark:hover:bg-red-800 dark:hover:text-red-100'
-              : 'bg-red-100 text-red-800 hover:bg-green-100 hover:text-green-800 dark:bg-red-800 dark:text-red-100 dark:hover:bg-green-800 dark:hover:text-green-100'
-          }`}
-        >
-          {account.isActive ? '已生效' : '已失效'}
-        </button>
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-        <div className="flex space-x-2">
-          <button
-            onClick={handleVisitFuclaude}
-            className="text-white bg-blue-500 hover:bg-blue-600 px-2 py-1 rounded"
+      <td className="px-6 py-4 whitespace-nowrap">
+        <div className="flex items-center space-x-2">
+          <code 
+            onClick={handleCopyLink}
+            className="font-mono text-sm text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-900 px-3 py-1.5 rounded-lg border border-gray-200/70 dark:border-gray-800/70 cursor-pointer hover:bg-gray-100/50 dark:hover:bg-gray-800/50 transition-colors duration-200"
           >
-            访问fuclaude
-          </button>
+            {account.sessionKey}
+          </code>
           <button
             onClick={handleCopyLink}
-            className="text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 px-2 py-1 rounded"
+            className="p-1.5 text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-all duration-200"
+            aria-label="Copy session key"
           >
-            复制链接
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+            </svg>
           </button>
+        </div>
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap">
+        <button
+          onClick={() => onToggleStatus(account.id)}
+          className={`flex items-center ${
+            account.isActive
+              ? 'text-green-600 dark:text-green-400'
+              : 'text-gray-400 dark:text-gray-500'
+          }`}
+        >
+          <div className={`w-2 h-2 rounded-full mr-2 ${account.isActive ? 'bg-green-500' : 'bg-gray-400 dark:bg-gray-500'}`}></div>
+          <span className="text-xs font-medium">{account.isActive ? '已生效' : '已失效'}</span>
+        </button>
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap">
+        <div className="flex items-center space-x-3">
           <button
-            onClick={() => onEdit(account)}
-            className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
+            onClick={handleVisitFuclaude}
+            className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 rounded-lg transition-colors duration-200"
           >
-            编辑
+            <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+            访问
           </button>
-          <button
-            onClick={() => onDelete(account.id)}
-            className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
-          >
-            删除
-          </button>
+          <div className="flex items-center space-x-1">
+            <button
+              onClick={() => onEdit(account)}
+              className="p-1.5 text-gray-400 hover:text-blue-600 dark:text-gray-500 dark:hover:text-blue-400 rounded transition-colors duration-200"
+              aria-label="Edit"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+            </button>
+            <button
+              onClick={() => onDelete(account.id)}
+              className="p-1.5 text-gray-400 hover:text-red-600 dark:text-gray-500 dark:hover:text-red-400 rounded transition-colors duration-200"
+              aria-label="Delete"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </button>
+          </div>
         </div>
       </td>
 
       {showCopiedToast && (
-        <div className="fixed bottom-4 right-4 bg-gray-800 text-white px-4 py-2 rounded shadow-lg">
+        <div className="fixed bottom-4 right-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2 rounded-lg shadow-lg">
           链接已复制到剪贴板
         </div>
       )}

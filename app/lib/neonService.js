@@ -3,6 +3,7 @@
  * This service provides functions to interact with the Neon PostgreSQL database via API routes
  */
 
+import { generateRandomString } from './utils';
 // Get all accounts
 export async function getAccountsFromNeon() {
   try {
@@ -155,3 +156,8 @@ export async function seedDatabaseNeon() {
     throw error;
   }
 } 
+
+// Refresh prefix
+export async function refreshPrefixInNeon(id) {
+  return updateAccountInNeon(id, { prefixUrl: generateRandomString(4) });
+}

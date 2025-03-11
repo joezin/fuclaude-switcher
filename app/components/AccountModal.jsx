@@ -2,13 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import { createAccount, updateAccount } from '../lib/accountService';
+import { generateRandomString } from '../lib/utils';
 
-export default function AccountModal({ account, mode, onClose, onSave }) {
+export default function AccountModal({ account, mode, onClose, onSave, accounts }) {
 
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     sessionKey: '',
+    prefixUrl: '',
     isActive: true
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -20,8 +22,16 @@ export default function AccountModal({ account, mode, onClose, onSave }) {
         name: account.name,
         email: account.email,
         sessionKey: account.sessionKey,
-        isActive: account.isActive
+        prefixUrl: account.prefixUrl,
+        isActive: true
       });
+    } else if (mode === 'create') {
+      const nextNumber = accounts.length +1;
+      
+      setFormData(prev => ({
+        ...prev,
+        name: nextNumber.toString(),
+      }));
     }
   }, [account, mode]);
 
@@ -39,10 +49,16 @@ export default function AccountModal({ account, mode, onClose, onSave }) {
     setError(null);
     
     try {
+      const updatedFormData = {
+        ...formData,
+        prefixUrl: generateRandomString(4),
+        isActive: true
+      };
+
       if (mode === 'create') {
-        await createAccount(formData);
+        await createAccount(updatedFormData);
       } else if (mode === 'edit' && account) {
-        await updateAccount(account.id, formData);
+        await updateAccount(account.id, updatedFormData);
       }
       
       if (onSave) {
@@ -121,7 +137,7 @@ export default function AccountModal({ account, mode, onClose, onSave }) {
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  会话密钥
+                  sessionKey
                 </label>
                 <input
                   type="text"
@@ -129,6 +145,7 @@ export default function AccountModal({ account, mode, onClose, onSave }) {
                   value={formData.sessionKey}
                   onChange={handleChange}
                   disabled={isViewOnly}
+                  placeholder="sk-ant-sid01......"
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
                   required
                 />
@@ -141,7 +158,7 @@ export default function AccountModal({ account, mode, onClose, onSave }) {
                   id="isActive"
                   checked={formData.isActive}
                   onChange={handleChange}
-                  disabled={isViewOnly}
+                  disabled={isViewOnly || mode === 'edit'}
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
                 <label htmlFor="isActive" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">

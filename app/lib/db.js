@@ -33,6 +33,7 @@ export function mapToAccount(row) {
     name: row.name,
     email: row.email,
     sessionKey: row.session_key,
+    prefixUrl: row.prefix_url,
     isActive: row.is_active,
     createdAt: row.created_at,
     updatedAt: row.updated_at

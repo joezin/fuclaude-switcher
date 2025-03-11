@@ -9,10 +9,10 @@ export function generateRandomString(length) {
 }
 
 // Generate fuclaude URL
-export function generateFuclaudeUrl(sessionKey) {
-  const randomPrefix = generateRandomString(4);
-  return `${randomPrefix}.fuclaude.oaifree.com/login_token?session_key=${sessionKey}`;
+export function generateFuclaudeUrl(sessionKey, prefix) {
+  return `https://${prefix}.fuclaude.oaifree.com/login_token?session_key=${sessionKey}`;
 }
+
 
 // Copy text to clipboard
 export async function copyToClipboard(text) {
