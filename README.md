@@ -1,97 +1,113 @@
-# FuClaude Switcher
+# FuClaude 切换器
 
-A Next.js application for managing accounts with Cloudflare D1 database integration.
+一个现代化的网页应用程序，用于无缝管理 Claude 访问，专为想要在多个设备上轻松访问 Claude 的用户设计。
 
-## Features
+## 功能特点
 
-- Account management (create, read, update, delete)
-- Session key management
-- Account status toggling
-- Responsive UI for both desktop and mobile
-- Cloudflare D1 database integration
+- 多平台支持（手机、桌面、平板）
+- 无需 VPN 即可一键访问 Claude
+- 自动生成带隔离的 FuClaude 访问链接
+- 便捷的会话密钥管理和有效性跟踪
+- 简单的链接分享功能
+- 社交登录支持（GitHub、Google、邮箱）
+- 清爽直观的用户界面
 
-## Setup
+## 技术栈
 
-### Prerequisites
+- **前端**: Next.js
+- **数据库**: Neon (PostgreSQL)
+- **身份认证**: Clerk
+- **部署**: Vercel
 
-- Node.js 18+ and npm
-- Cloudflare account with Workers and D1 access
+## 为什么选择 FuClaude 切换器？
 
-### Installation
+FuClaude 切换器旨在解决 Claude 用户面临的常见挑战：
 
-1. Clone the repository:
+- 跨平台访问需求
+- 移动设备上的 VPN 依赖
+- 复杂的管理系统
+- 对轻量级解决方案的需求
+
+我们的解决方案提供了一个简化的、用户友好的界面，让您可以即时访问 Claude - 只需点击即可使用，用完即走。
+
+## 设置
+
+### 前置要求
+
+- Node.js 18+ 和 npm
+- Neon 数据库账号
+- Clerk 账号用于身份认证
+- Vercel 账号用于部署
+
+### 安装
+
+1. 克隆仓库：
    ```bash
    git clone https://github.com/yourusername/fuclaude-switcher.git
    cd fuclaude-switcher
    ```
 
-2. Install dependencies:
+2. 安装依赖：
    ```bash
    npm install
    ```
 
-3. Create a Cloudflare D1 database:
-   ```bash
-   npx wrangler d1 create fuclaude-switcher
+3. 设置环境变量：
+   ```env
+   
+# Neon
+NEON_DATABASE_URL=postgresql://fuclaude-switcher_owner:npg_hpl93kibZKey@ep-rapid-morning-a1a4uex1-pooler.ap-southeast-1.aws.neon.tech/fuclaude-switcher?sslmode=require
+
+# Clerk
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_bG92ZWQta2FuZ2Fyb28tNTQuY2xlcmsuYWNjb3VudHMuZGV2JA
+CLERK_SECRET_KEY=sk_test_iSetRT70WyTRJ3ATxWqvlUWNbEH6UugJs0BDHsTZ8n
    ```
 
-4. Update the `wrangler.toml` file with your database ID:
-   ```toml
-   [[d1_databases]]
-   binding = "DB"
-   database_name = "fuclaude-switcher"
-   database_id = "your-database-id" # Replace with the ID from the previous step
-   ```
+### 开发
 
-5. Create the database schema:
-   ```bash
-   npx wrangler d1 execute fuclaude-switcher --file=./schema.sql
-   ```
-
-### Development
-
-Run the development server with Wrangler to enable D1 access:
+运行开发服务器：
 
 ```bash
-npx wrangler pages dev .next --d1=fuclaude-switcher
+npm run dev
 ```
 
-### Production Deployment
+### 生产环境部署
 
-Deploy to Cloudflare Pages:
+该应用程序配置为在 Vercel 上部署。只需将您的仓库连接到 Vercel，它就会自动处理部署过程。
 
-```bash
-npm run build
-npx wrangler pages deploy .next
-```
-
-## API Routes
-
-The application provides the following API routes:
-
-- `GET /api/accounts` - Get all accounts
-- `GET /api/accounts?id=1` - Get a specific account
-- `POST /api/accounts` - Create a new account
-- `PUT /api/accounts/1` - Update an account
-- `DELETE /api/accounts/1` - Delete an account
-- `POST /api/seed` - Seed the database with initial data (development only)
-
-## Database Schema
-
-The application uses a simple schema for accounts:
+## 数据库架构
 
 ```sql
+-- 如果表存在则删除
+DROP TABLE IF EXISTS accounts;
+
+-- 创建账户表
 CREATE TABLE accounts (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  id SERIAL PRIMARY KEY,
+  user_id TEXT NOT NULL,
   name TEXT NOT NULL,
   email TEXT NOT NULL UNIQUE,
   session_key TEXT NOT NULL,
-  is_active INTEGER NOT NULL DEFAULT 1,
+  prefix_url TEXT NOT NULL,
+  is_active BOOLEAN NOT NULL DEFAULT TRUE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+); 
 ```
 
-## License
+## API 路由
+
+- `GET /api/accounts` - 获取用户账户
+- `POST /api/accounts` - 创建新账户
+- `PATCH /api/accounts/:id` - 更新账户状态
+- `DELETE /api/accounts/:id` - 删除账户
+- `POST /api/share` - 生成可分享链接
+- `GET /api/validate/:token` - 验证分享链接
+
+## 贡献
+
+欢迎贡献！请随时提交 Pull Request。
+
+## 许可证
 
 MIT
