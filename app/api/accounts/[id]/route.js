@@ -36,14 +36,15 @@ export async function PUT(request, context) {
     }
     
     if (email !== undefined) {
+      // 不需要检查邮箱是否重复
       // Check if email is already used by another account
-      if (email !== existingAccount.email) {
-        const emailCheckQuery = 'SELECT id FROM accounts WHERE email = $1 AND id != $2 AND user_id = $3';
-        const emailExists = await executeQuerySingle(emailCheckQuery, [email, id, userId]);
-        if (emailExists) {
-          return NextResponse.json({ error: 'Email already exists' }, { status: 409 });
-        }
-      }
+      // if (email !== existingAccount.email) {
+        // const emailCheckQuery = 'SELECT id FROM accounts WHERE email = $1 AND id != $2 AND user_id = $3';
+        // const emailExists = await executeQuerySingle(emailCheckQuery, [email, id, userId]);
+        // if (emailExists) {
+        //   return NextResponse.json({ error: 'Email already exists' }, { status: 409 });
+        // }
+      // }
       updates.push(`email = $${paramIndex}`);
       values.push(email);
       paramIndex++;

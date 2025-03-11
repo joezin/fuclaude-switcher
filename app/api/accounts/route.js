@@ -48,7 +48,7 @@ export async function POST(request, context) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { name, email, sessionKey, isActive = true } = await request.json();
+    const { name, email, sessionKey, isActive = true, prefixUrl } = await request.json();
     
     // Validate required fields
     if (!name || !email || !sessionKey) {
@@ -56,21 +56,21 @@ export async function POST(request, context) {
     }
     
     // Check if email already exists for this user
-    const checkQuery = 'SELECT id FROM accounts WHERE email = $1 AND user_id = $2';
-    const existingAccount = await executeQuerySingle(checkQuery, [email, userId]);
+    // const checkQuery = 'SELECT id FROM accounts WHERE email = $1 AND user_id = $2';
+    // const existingAccount = await executeQuerySingle(checkQuery, [email, userId]);
     
-    if (existingAccount) {
-      return NextResponse.json({ error: 'Email already exists' }, { status: 409 });
-    }
+    // if (existingAccount) {
+    //   return NextResponse.json({ error: 'Email already exists' }, { status: 409 });
+    // }
     
     // Insert new account
     const insertQuery = `
-      INSERT INTO accounts (name, email, session_key, is_active, user_id) 
-      VALUES ($1, $2, $3, $4, $5) 
+      INSERT INTO accounts (name, email, session_key, is_active, user_id, prefix_url) 
+      VALUES ($1, $2, $3, $4, $5, $6) 
       RETURNING *
     `;
     
-    const newAccount = await executeQuerySingle(insertQuery, [name, email, sessionKey, isActive, userId]);
+    const newAccount = await executeQuerySingle(insertQuery, [name, email, sessionKey, isActive, userId, prefixUrl]);
     
     if (!newAccount) {
       return NextResponse.json({ error: 'Failed to create account' }, { status: 500 });
