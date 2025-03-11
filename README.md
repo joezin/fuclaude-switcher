@@ -55,12 +55,12 @@ FuClaude 切换器旨在解决 Claude 用户面临的常见挑战：
 3. 设置环境变量：
    ```env
    
-# Neon
-NEON_DATABASE_URL=postgresql://fuclaude-switcher_owner:npg_hpl93kibZKey@ep-rapid-morning-a1a4uex1-pooler.ap-southeast-1.aws.neon.tech/fuclaude-switcher?sslmode=require
+      # Neon
+      NEON_DATABASE_URL=postgresql://fuclaude-switcher_owner:npg_hpl93kibZKey@ep-rapid-morning-a1a4uex1-pooler.ap-southeast-1.aws.neon.tech/fuclaude-switcher?sslmode=require
 
-# Clerk
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_bG92ZWQta2FuZ2Fyb28tNTQuY2xlcmsuYWNjb3VudHMuZGV2JA
-CLERK_SECRET_KEY=sk_test_iSetRT70WyTRJ3ATxWqvlUWNbEH6UugJs0BDHsTZ8n
+      # Clerk
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_bG92ZWQta2FuZ2Fyb28tNTQuY2xlcmsuYWNjb3VudHMuZGV2JA
+      CLERK_SECRET_KEY=sk_test_iSetRT70WyTRJ3ATxWqvlUWNbEH6UugJs0BDHsTZ8n
    ```
 
 ### 开发
