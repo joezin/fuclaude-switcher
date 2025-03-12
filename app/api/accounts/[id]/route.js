@@ -97,7 +97,7 @@ export async function PUT(request, context) {
 // DELETE /api/accounts/[id] - Delete an account
 export async function DELETE(request, context) {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
     
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
