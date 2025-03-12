@@ -17,6 +17,7 @@ export default function AccountList() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, accountId: null });
+  const [isDeleting, setIsDeleting] = useState(false);
   const [toast, setToast] = useState({ message: '', type: 'success' });
 
   useEffect(() => {
@@ -88,6 +89,7 @@ export default function AccountList() {
 
   const handleConfirmDelete = async () => {
     try {
+      setIsDeleting(true);
       await deleteAccount(confirmDialog.accountId);
       await refreshAccounts();
       showToast('账号删除成功');
@@ -95,6 +97,7 @@ export default function AccountList() {
       console.error('Error deleting account:', err);
       setError('Failed to delete account. Please try again.');
     } finally {
+      setIsDeleting(false);
       setConfirmDialog({ isOpen: false, accountId: null });
     }
   };
@@ -219,6 +222,7 @@ export default function AccountList() {
         message="确定要删除这个账号吗？此操作无法撤销。"
         onConfirm={handleConfirmDelete}
         onCancel={handleCancelDelete}
+        isLoading={isDeleting}
       />
 
       {toast.message && (
