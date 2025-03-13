@@ -205,7 +205,7 @@ export default function AccountList() {
         <EmptyState onAddAccount={handleCreate} />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {accounts.map(account => (
+          {accounts.map((account, index) => (
             <AccountCard
               key={account.id}
               account={account}
@@ -214,6 +214,7 @@ export default function AccountList() {
               onDelete={handleDelete}
               onEdit={handleEdit}
               onRefreshPrefix={handleRefreshPrefix}
+              index={index}
             />
           ))}
         </div>

@@ -9,7 +9,8 @@ export default function AccountCard({
   onToggleStatus, 
   onEdit, 
   onDelete,
-  onRefreshPrefix 
+  onRefreshPrefix ,
+  index
 }) {
   const [sessionKey, setSessionKey] = useState(account.sessionKey);
   const [showCopiedToast, setShowCopiedToast] = useState(false);
@@ -52,7 +53,7 @@ export default function AccountCard({
       <div className="p-5 flex items-center justify-between">
         <div className="flex items-center">
           <div className="w-9 h-9 bg-blue-500/10 dark:bg-blue-500/20 border border-blue-500/20 dark:border-blue-500/30 text-blue-600 dark:text-blue-400 rounded-lg flex items-center justify-center font-bold mr-3 group-hover:bg-blue-500/20 dark:group-hover:bg-blue-500/30 transition-colors duration-300">
-            {account.id}
+            {index + 1}
           </div>
           <div>
             <h3 className="font-medium text-gray-900 dark:text-gray-100 max-w-[160px] truncate">{account.email}</h3>
