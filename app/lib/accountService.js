@@ -10,7 +10,7 @@ import {
   seedDatabaseNeon,
   refreshPrefixInNeon
 } from './neonService';
-
+import { generateRandomString } from './utils';
 // Export the Neon functions with the same interface as before
 export const getAccounts = async () => {
   return await getAccountsFromNeon();
@@ -47,5 +47,30 @@ export const seedDatabase = async () => {
 
 export const refreshPrefix = async (id) => {
   return await refreshPrefixInNeon(id);
+};
+
+export const bulkImportAccounts = async (accounts) => {
+  // Validate accounts format
+  if (!Array.isArray(accounts)) {
+    throw new Error('Invalid accounts format');
+  }
+
+  const results = [];
+  for (const account of accounts) {
+    try {
+      const newAccount = await createAccountInNeon({
+        name: account.email||account.account,
+        email: account.email||account.account,
+        password: account.pwd,
+        sessionKey: account.cookie,
+        isActive: true,
+        prefixUrl: generateRandomString(4)
+      });
+      results.push({ success: true, account: newAccount });
+    } catch (error) {
+      results.push({ success: false, error: error.message, account });
+    }
+  }
+  return results;
 };
 

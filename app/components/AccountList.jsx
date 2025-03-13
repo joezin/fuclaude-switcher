@@ -7,10 +7,12 @@ import AccountModal from './AccountModal';
 import EmptyState from './EmptyState';
 import ConfirmDialog from './ConfirmDialog';
 import Toast from './Toast';
+import BulkImportModal from './BulkImportModal';
 
 export default function AccountList() {
   const [accounts, setAccounts] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isBulkImportModalOpen, setIsBulkImportModalOpen] = useState(false);
   const [currentAccount, setCurrentAccount] = useState(null);
   const [modalMode, setModalMode] = useState('view'); // 'view', 'edit', 'create'
   const [isMobileView, setIsMobileView] = useState(false);
@@ -134,6 +136,10 @@ export default function AccountList() {
     }
   };
 
+  const handleBulkImport = () => {
+    setIsBulkImportModalOpen(true);
+  };
+
   // Show accounts
   return (
     <div className="container mx-auto px-4">
@@ -147,13 +153,24 @@ export default function AccountList() {
           </div>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">管理您的 Fuclaude 账号</p>
         </div>
-        <button
-          onClick={handleCreate}
-          className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 px-4 py-2.5 rounded-lg font-medium text-sm text-white shadow-md shadow-blue-900/20 hover:shadow-blue-800/30 group flex items-center flex-shrink-0"
-        >
-          <span className="mr-1.5 text-lg transition-transform duration-300 group-hover:rotate-90">+</span> 
-          添加账号
-        </button>
+        <div className="flex gap-3">
+          <button
+            onClick={handleBulkImport}
+            className="bg-green-600 hover:bg-green-700 transition-all duration-300 px-4 py-2.5 rounded-lg font-medium text-sm text-white shadow-md shadow-green-900/20 hover:shadow-green-800/30 flex items-center"
+          >
+            <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+            </svg>
+            批量导入
+          </button>
+          <button
+            onClick={handleCreate}
+            className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 px-4 py-2.5 rounded-lg font-medium text-sm text-white shadow-md shadow-blue-900/20 hover:shadow-blue-800/30 group flex items-center"
+          >
+            <span className="mr-1.5 text-lg transition-transform duration-300 group-hover:rotate-90">+</span> 
+            添加账号
+          </button>
+        </div>
       </div>
       
       {error && accounts.length === 0 && (
@@ -215,6 +232,14 @@ export default function AccountList() {
           accounts={accounts}
         />
       )}
+
+      <BulkImportModal
+        isOpen={isBulkImportModalOpen}
+        onClose={() => setIsBulkImportModalOpen(false)}
+        onImportComplete={async () => {
+          await refreshAccounts();
+        }}
+      />
 
       <ConfirmDialog
         isOpen={confirmDialog.isOpen}
