@@ -21,9 +21,10 @@ export default function AccountList() {
   const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, accountId: null });
   const [isDeleting, setIsDeleting] = useState(false);
   const [toast, setToast] = useState({ message: '', type: 'success' });
-  const [useCommonDomain, setUseCommonDomain] = useState(false);
+  const [useCommonDomain, setUseCommonDomain] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredAccounts, setFilteredAccounts] = useState([]);
+  const [isSearchVisible, setIsSearchVisible] = useState(false);
 
   useEffect(() => {
     // Load accounts when component mounts
@@ -184,42 +185,57 @@ export default function AccountList() {
               <span className="ml-1 text-sm text-blue-500 dark:text-blue-300">个</span>
             </div>
           </div>
-        </div>
-
-        {/* 搜索和操作按钮行 */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-between items-end">
-          {/* 搜索框 */}
-          <div className="w-full sm:w-1/2 relative group">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-400 dark:text-gray-500 group-focus-within:text-blue-500 dark:group-focus-within:text-blue-400 transition-colors duration-200">
-              <svg className="w-4 h-4" aria-hidden="true" fill="none" viewBox="0 0 20 20">
-                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-              </svg>
-            </div>
-            <input
-              type="search"
-              id="search"
-              className="block w-full p-3 pl-12 text-base text-gray-900 dark:text-gray-100 border border-gray-200/70 dark:border-gray-700/70 rounded-xl bg-gray-50/70 dark:bg-gray-900/70 focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-500/50 focus:border-blue-500 dark:focus:border-blue-500 backdrop-blur-sm transition-all duration-200"
-              placeholder="搜索账号..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            {searchQuery && (
+          <div className="flex relative justify-end  sm:w-64">
+            {isSearchVisible ? (
+              <div className="w-32 relative group animate-fade-in">
+                <input
+                  type="search"
+                  id="search"
+                  className="block w-full p-3 text-base text-gray-900 dark:text-gray-100 border border-gray-200/70 dark:border-gray-700/70 rounded-xl bg-gray-50/70 dark:bg-gray-900/70 focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-500/50 focus:border-blue-500 dark:focus:border-blue-500 backdrop-blur-sm transition-all duration-200"
+                  placeholder="搜索账号..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onBlur={() => {
+                    if (!searchQuery) {
+                      setIsSearchVisible(false);
+                    }
+                  }}
+                  autoFocus
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                )}
+              </div>
+            ) : (
               <button
-                onClick={() => setSearchQuery('')}
-                className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+                onClick={() => {
+                  setSearchQuery('');
+                  setIsSearchVisible(true);
+                }}
+                className=" p-3 rounded-xl bg-gray-50/70 dark:bg-gray-900/70 hover:bg-gray-100/70 dark:hover:bg-gray-800/70 border border-gray-200/70 dark:border-gray-700/70 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-all duration-200 flex items-center justify-center"
+                title="搜索账号"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M6 18L18 6M6 6l12 12" />
+                <svg className="w-5 h-5" aria-hidden="true" fill="none" viewBox="0 0 20 20">
+                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
                 </svg>
               </button>
             )}
           </div>
+        </div>
+
+        {/* 搜索和操作按钮行 */}
+        <div className="flex flex-row gap-4  items-center">
+          {/* 搜索框 */}
           
-          {/* 操作按钮和域名切换 */}
-          <div className="flex flex-col sm:flex-row items-center gap-4">
-            {/* 域名切换开关 */}
-            <div className="flex items-center w-full sm:w-auto mb-2 sm:mb-0 bg-gray-50/70 dark:bg-gray-900/70 backdrop-blur-sm py-2 px-4 rounded-xl border border-gray-200/70 dark:border-gray-700/70">
-              <span className={`text-sm mr-2 whitespace-nowrap transition-colors ${!useCommonDomain ? 'font-medium text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}>隔离域名</span>
+
+            <div className="flex items-center  sm:flex-none bg-gray-50/70 dark:bg-gray-900/70 backdrop-blur-sm py-2 px-4 rounded-xl border border-gray-200/70 dark:border-gray-700/70">
               <label className="inline-flex relative items-center cursor-pointer mx-1">
                 <input
                   type="checkbox"
@@ -229,36 +245,31 @@ export default function AccountList() {
                 />
                 <div className="w-11 h-6 bg-gray-200 dark:bg-gray-700 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300/30 dark:peer-focus:ring-blue-800/30 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border dark:after:border-gray-600 after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 transition-all duration-300"></div>
               </label>
-              <span className={`text-sm ml-2 whitespace-nowrap transition-colors ${useCommonDomain ? 'font-medium text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}>通用域名</span>
+              <span className={`text-sm mr-2 whitespace-nowrap transition-colors text-gray-500 dark:text-gray-400`}>{useCommonDomain ? '通用域名' : '隔离域名'}</span>
             </div>
             
-            {/* 按钮组 - 保持两个按钮在一起 */}
-            <div className="flex items-center gap-3 w-full sm:w-auto justify-center">
+            {/* 按钮组 */}
+            <div className="flex items-center gap-3">
               <button
                 onClick={handleBulkImport}
-                className="min-w-[110px] whitespace-nowrap bg-emerald-600 hover:bg-emerald-700 transition-all duration-300 px-4 py-3 rounded-xl font-medium text-base text-white shadow-sm shadow-emerald-900/10 hover:shadow-lg hover:shadow-emerald-800/20 flex items-center justify-center group"
+                className="p-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 transition-all duration-300 text-white shadow-sm shadow-emerald-900/10 hover:shadow-lg hover:shadow-emerald-800/20 flex items-center justify-center group"
+                title="批量导入"
               >
-                <span className="relative inline-flex mr-2">
-                  <svg className="w-5 h-5 flex-shrink-0 transition-transform duration-300 group-hover:-translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                  </svg>
-                </span>
-                批量导入
+                <svg className="w-5 h-5 transition-transform duration-300 group-hover:-translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
               </button>
               <button
                 onClick={handleCreate}
-                className="min-w-[110px] whitespace-nowrap bg-blue-600 hover:bg-blue-700 transition-all duration-300 px-4 py-3 rounded-xl font-medium text-base text-white shadow-sm shadow-blue-900/10 hover:shadow-lg hover:shadow-blue-800/20 flex items-center justify-center group"
+                className="p-3 rounded-xl bg-blue-600 hover:bg-blue-700 transition-all duration-300 text-white shadow-sm shadow-blue-900/10 hover:shadow-lg hover:shadow-blue-800/20 flex items-center justify-center group"
+                title="添加账号"
               >
-                <span className="inline-flex items-center justify-center mr-2 w-5 h-5 transition-transform duration-300 ease-out group-hover:rotate-180">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v12m6-6H6" />
-                  </svg>
-                </span>
-                添加账号
+                <svg className="w-5 h-5 transition-transform duration-300 ease-out group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v12m6-6H6" />
+                </svg>
               </button>
             </div>
           </div>
-        </div>
       </div>
       
       {error && accounts.length === 0 && (
