@@ -9,8 +9,8 @@ export function generateRandomString(length=4) {
 }
 
 // Generate fuclaude URL
-export function generateFuclaudeUrl(sessionKey, prefix) {
-  return `https://${prefix}.fuclaude.oaifree.com/login_token?session_key=${sessionKey}`;
+export function generateFuclaudeUrl(sessionKey,apiUrl) {
+  return `${apiUrl}/login_token?session_key=${sessionKey}`;
 }
 
 

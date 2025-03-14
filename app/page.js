@@ -4,7 +4,7 @@ import AccountList from './components/AccountList';
 export default function Home() {
   return (
     <Layout>
-      <div>
+      <div className="py-4">
         <AccountList />
       </div>
     </Layout>
